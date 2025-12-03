@@ -4,7 +4,7 @@ This is a simple REST API made with Gin to learn Go and implement a custom rate 
 The demo API has one endpoint that returns a random quote. 
 
 ### Rate Limit
-If someone sends too many requests in too short of a time span, new requests will be blocked.
+If a client sends too many requests in too short of a time span, new requests will be blocked.
 
 The limits can be configured. 
 
