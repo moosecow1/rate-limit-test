@@ -1,3 +1,4 @@
+# Use Go image
 FROM golang:1.25-alpine AS builder
 
 WORKDIR /app
@@ -6,26 +7,24 @@ WORKDIR /app
 COPY go.mod go.sum ./
 RUN go mod download
 
-# Resources
-ADD quotes.json /app/quotes.json
-
-# App files
+# Source code
 COPY . .
 
-# Build
+# Build source
 RUN go build -o api ./cmd/api 
 
-# Alpie
+# I don't know!
 FROM alpine:latest
 WORKDIR /app
 
+# Copy binary
 COPY --from=builder /app/api .
 
 # Expose API port
 EXPOSE 8080
 
-# Other
+# Resources
 COPY quotes.json .
 
-
+# Run 
 CMD ["./api"]
