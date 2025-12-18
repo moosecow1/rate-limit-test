@@ -19,19 +19,19 @@ func StartLimiter() {
 	err := LoadEnvVariables()
 
 	if err != nil {
-		log.Printf("Failed to load enviroment variables: %w", err)
+		log.Printf("Failed to load enviroment variables: %v", err)
 	}
 
 	err = InitDB()
 
 	if err != nil {
-		log.Printf("Error connecting to DB: %w", err)
+		log.Printf("Error connecting to DB: %v", err)
 	}
 
 	err = CreateTables()
 
 	if err != nil {
-		log.Printf("Error creating tables: %w", err)
+		log.Printf("Error creating tables: %v", err)
 	}
 }
 
@@ -75,8 +75,14 @@ func InitDB() error {
 	db, err = sql.Open("postgres", dataSource)
 
 	if err != nil {
-		return err
+		log.Printf("Failed to connect to DB. Retrying in 2s.")
+
+		time.Sleep(2 * time.Second)
+
+		return InitDB()
 	}
+
+	log.Printf("Connected to DB.")
 
 	return db.Ping()
 }
@@ -84,11 +90,7 @@ func InitDB() error {
 func CloseDB() error {
 	err := db.Close()
 
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return err
 }
 
 func GetPeriod() int {
@@ -114,11 +116,7 @@ func CanAccess(ip string) (bool, error) {
 
 	err := db.QueryRow("SELECT COUNT(*) FROM rate_limits WHERE ip=$1", ip).Scan(&count)
 
-	if err != nil {
-		return false, err
-	}
-
-	return count < limit, nil
+	return count < limit, err
 }
 
 func GetOldestLog(ip string) (time.Time, error) {
