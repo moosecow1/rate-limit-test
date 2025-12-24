@@ -13,14 +13,19 @@
 # Rate Limit
 If a client sends too many requests in too short of a time span, new requests will be blocked.
 
-The limits can be configured. 
-
 It will tell you how long until you can request again.
 ```json
 {
   "try_in": 5
 }
 ```
+
+# Configuration
+The limits can be configured in `docker-compose..yaml` under api/environment. 
+
+The variables that matter are:
+- RATE_LIMIT, this is how many requests the limiter will accept in the time period
+- RATE_PERIOD, this is how long it takes until a previous request is forgotten
 
 # API
 `GET /get-quote` returns a random quote:
